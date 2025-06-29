@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Pay 支付演示系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <span class="material-icons">payment</span>
+                        <h1>Z-Pay 演示</h1>
+                    </div>
+                    <nav class="nav">
+                        <a href="#demo" class="nav-link">支付演示</a>
+                        <a href="#docs" class="nav-link">文档</a>
+                        <a href="#contact" class="nav-link">联系</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>安全便捷的支付解决方案</h2>
+                    <p>体验Z-Pay支付接口的强大功能，支持支付宝、微信、QQ钱包等多种支付方式</p>
+                    <button class="btn btn-primary" onclick="scrollToDemo()">
+                        <span class="material-icons">arrow_downward</span>
+                        立即体验
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Demo Section -->
+        <section id="demo" class="demo-section">
+            <div class="container">
+                <h2 class="section-title">支付演示</h2>
+                
+                <div class="payment-container">
+                    <div class="payment-card">
+                        <div class="card-header">
+                            <span class="material-icons">shopping_cart</span>
+                            <h3>创建支付订单</h3>
+                        </div>
+
+                        <form id="paymentForm" class="payment-form">
+                            <div class="form-group">
+                                <label for="productName">商品名称</label>
+                                <div class="input-container">
+                                    <span class="material-icons">inventory_2</span>
+                                    <input type="text" id="productName" name="productName" placeholder="请输入商品名称" value="测试商品" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="amount">支付金额 (元)</label>
+                                <div class="input-container">
+                                    <span class="material-icons">attach_money</span>
+                                    <input type="number" id="amount" name="amount" placeholder="0.00" value="1.00" min="0.01" step="0.01" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="customerName">客户姓名</label>
+                                <div class="input-container">
+                                    <span class="material-icons">person</span>
+                                    <input type="text" id="customerName" name="customerName" placeholder="请输入客户姓名" value="测试用户">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="customerEmail">客户邮箱</label>
+                                <div class="input-container">
+                                    <span class="material-icons">email</span>
+                                    <input type="email" id="customerEmail" name="customerEmail" placeholder="请输入客户邮箱" value="test@example.com">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>支付方式</label>
+                                <div class="payment-methods">
+                                    <div class="payment-method">
+                                        <input type="radio" id="alipay" name="paymentMethod" value="alipay" checked>
+                                        <label for="alipay" class="payment-option">
+                                            <span class="payment-icon">💰</span>
+                                            <span>支付宝</span>
+                                        </label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="radio" id="wxpay" name="paymentMethod" value="wxpay">
+                                        <label for="wxpay" class="payment-option">
+                                            <span class="payment-icon">💚</span>
+                                            <span>微信支付</span>
+                                        </label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="radio" id="qqpay" name="paymentMethod" value="qqpay">
+                                        <label for="qqpay" class="payment-option">
+                                            <span class="payment-icon">🐧</span>
+                                            <span>QQ钱包</span>
+                                        </label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="radio" id="tenpay" name="paymentMethod" value="tenpay">
+                                        <label for="tenpay" class="payment-option">
+                                            <span class="payment-icon">💳</span>
+                                            <span>财付通</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-large" id="payButton">
+                                <span class="material-icons">payment</span>
+                                创建支付订单
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Order Info Panel -->
+                    <div class="order-info" id="orderInfo" style="display: none;">
+                        <div class="card-header">
+                            <span class="material-icons">receipt_long</span>
+                            <h3>订单信息</h3>
+                        </div>
+                        <div class="order-details" id="orderDetails">
+                            <!-- 订单详情将通过JavaScript填充 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">核心特性</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <span class="material-icons">security</span>
+                        <h3>安全可靠</h3>
+                        <p>采用MD5签名验证，确保交易安全</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="material-icons">flash_on</span>
+                        <h3>快速集成</h3>
+                        <p>简单的API接口，几分钟即可完成集成</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="material-icons">devices</span>
+                        <h3>多平台支持</h3>
+                        <p>支持支付宝、微信、QQ钱包等主流支付方式</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="material-icons">support_agent</span>
+                        <h3>完善服务</h3>
+                        <p>7x24小时技术支持，快速响应</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>Z-Pay演示系统</h4>
+                        <p>展示Z-Pay支付接口的集成和使用方法</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>相关链接</h4>
+                        <ul>
+                            <li><a href="https://z-pay.cn">官方网站</a></li>
+                            <li><a href="https://z-pay.cn/member/doc.html">开发文档</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>技术支持</h4>
+                        <p>如有问题请联系技术支持</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Z-Pay演示系统. 仅供学习演示使用.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal" id="loadingModal">
+        <div class="modal-content">
+            <div class="loading-spinner"></div>
+            <p>正在创建支付订单...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

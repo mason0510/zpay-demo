@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付结果 - Z-Pay演示系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .result-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--background-color);
+        }
+        
+        .result-card {
+            background: var(--surface-color);
+            padding: var(--spacing-xl);
+            border-radius: 8px;
+            box-shadow: var(--shadow-3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .result-icon.success {
+            color: var(--success-color);
+        }
+        
+        .result-icon.error {
+            color: var(--error-color);
+        }
+        
+        .result-icon.pending {
+            color: var(--warning-color);
+        }
+        
+        .result-title {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .result-message {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.6;
+        }
+        
+        .result-details {
+            background: var(--background-color);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-xl);
+            text-align: left;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .detail-row:last-child {
+            margin-bottom: 0;
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid var(--divider-color);
+            font-weight: 500;
+        }
+        
+        .detail-label {
+            color: var(--text-secondary);
+        }
+        
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-secondary {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            border: 2px solid var(--divider-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--divider-color);
+            border-color: var(--text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <div class="result-card">
+            <div class="result-icon pending" id="resultIcon">
+                <span class="material-icons">hourglass_empty</span>
+            </div>
+            
+            <h1 class="result-title" id="resultTitle">支付处理中...</h1>
+            
+            <p class="result-message" id="resultMessage">
+                正在处理您的支付请求，请稍候...
+            </p>
+            
+            <div class="result-details" id="resultDetails">
+                <div class="detail-row">
+                    <span class="detail-label">订单号:</span>
+                    <span class="detail-value" id="orderNo">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">商品名称:</span>
+                    <span class="detail-value" id="productName">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">支付方式:</span>
+                    <span class="detail-value" id="paymentMethod">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">支付时间:</span>
+                    <span class="detail-value" id="paymentTime">-</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">支付金额:</span>
+                    <span class="detail-value" id="paymentAmount">-</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="goHome()">
+                    <span class="material-icons">home</span>
+                    返回首页
+                </button>
+                <button class="btn btn-primary" onclick="checkPaymentStatus()" id="checkStatusBtn">
+                    <span class="material-icons">refresh</span>
+                    检查支付状态
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 从URL参数获取支付信息
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                orderNo: params.get('out_trade_no'),
+                tradeNo: params.get('trade_no'),
+                amount: params.get('money'),
+                status: params.get('trade_status'),
+                sign: params.get('sign')
+            };
+        }
+        
+        // 支付方式映射
+        const paymentMethodNames = {
+            'alipay': '支付宝',
+            'wxpay': '微信支付',
+            'qqpay': 'QQ钱包',
+            'tenpay': '财付通'
+        };
+        
+        // 页面加载后处理支付结果
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = getUrlParams();
+            console.log('支付返回参数:', params);
+            
+            if (params.orderNo) {
+                updatePaymentResult(params);
+            } else {
+                // 没有参数，可能是直接访问，显示默认状态
+                setTimeout(() => {
+                    showDefaultResult();
+                }, 2000);
+            }
+        });
+        
+        // 更新支付结果显示
+        function updatePaymentResult(params) {
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            // 更新订单详情
+            document.getElementById('orderNo').textContent = params.orderNo || '-';
+            document.getElementById('paymentTime').textContent = new Date().toLocaleString();
+            document.getElementById('paymentAmount').textContent = params.amount ? `¥${params.amount}` : '-';
+            
+            // 根据支付状态更新显示
+            if (params.status === 'TRADE_SUCCESS' || params.status === 'success') {
+                // 支付成功
+                resultIcon.className = 'result-icon success';
+                resultIcon.innerHTML = '<span class="material-icons">check_circle</span>';
+                resultTitle.textContent = '支付成功！';
+                resultMessage.textContent = '您的支付已完成，感谢您的购买！';
+                
+                // 隐藏检查状态按钮
+                document.getElementById('checkStatusBtn').style.display = 'none';
+                
+            } else if (params.status === 'TRADE_CLOSED' || params.status === 'failed') {
+                // 支付失败
+                resultIcon.className = 'result-icon error';
+                resultIcon.innerHTML = '<span class="material-icons">error</span>';
+                resultTitle.textContent = '支付失败';
+                resultMessage.textContent = '支付过程中出现问题，请重试或联系客服。';
+                
+            } else {
+                // 支付处理中或其他状态
+                resultIcon.className = 'result-icon pending';
+                resultIcon.innerHTML = '<span class="material-icons">hourglass_empty</span>';
+                resultTitle.textContent = '支付处理中...';
+                resultMessage.textContent = '正在确认您的支付状态，请稍候...';
+                
+                // 自动检查支付状态
+                setTimeout(() => {
+                    checkPaymentStatus();
+                }, 3000);
+            }
+        }
+        
+        // 显示默认结果（无参数时）
+        function showDefaultResult() {
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            resultIcon.className = 'result-icon error';
+            resultIcon.innerHTML = '<span class="material-icons">info</span>';
+            resultTitle.textContent = '无效的访问';
+            resultMessage.textContent = '没有找到相关的支付信息，请从正确的页面访问。';
+            
+            document.getElementById('checkStatusBtn').style.display = 'none';
+        }
+        
+        // 检查支付状态
+        async function checkPaymentStatus() {
+            const orderNo = document.getElementById('orderNo').textContent;
+            if (orderNo === '-') {
+                alert('没有有效的订单号');
+                return;
+            }
+            
+            const checkBtn = document.getElementById('checkStatusBtn');
+            const originalText = checkBtn.innerHTML;
+            checkBtn.innerHTML = '<span class="material-icons">refresh</span>检查中...';
+            checkBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`/api/order-status/${orderNo}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const status = result.data.status;
+                    
+                    // 根据查询结果更新页面
+                    if (status === 'success') {
+                        updatePaymentResult({ 
+                            orderNo: orderNo, 
+                            status: 'TRADE_SUCCESS',
+                            amount: result.data.amount
+                        });
+                    } else if (status === 'failed') {
+                        updatePaymentResult({ 
+                            orderNo: orderNo, 
+                            status: 'TRADE_CLOSED',
+                            amount: result.data.amount
+                        });
+                    } else {
+                        // 仍在处理中
+                        setTimeout(() => {
+                            checkPaymentStatus();
+                        }, 5000);
+                    }
+                } else {
+                    alert('查询支付状态失败: ' + result.message);
+                }
+                
+            } catch (error) {
+                console.error('查询支付状态出错:', error);
+                alert('查询支付状态出错，请稍后重试');
+            } finally {
+                checkBtn.innerHTML = originalText;
+                checkBtn.disabled = false;
+            }
+        }
+        
+        // 返回首页
+        function goHome() {
+            window.location.href = '/';
+        }
+        
+        // 页面关闭时清理定时器（如果有的话）
+        window.addEventListener('beforeunload', function() {
+            // 清理可能的定时器
+        });
+    </script>
+</body>
+</html>
