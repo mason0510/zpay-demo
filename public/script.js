@@ -149,7 +149,7 @@ function displayOrderInfo(orderData) {
         </button>
         <div style="margin-top: 16px; padding: 12px; background-color: #E3F2FD; border-radius: 4px; font-size: 14px; color: #1976D2;">
             <span class="material-icons" style="font-size: 16px; vertical-align: middle;">info</span>
-            支付页面将在3秒后自动打开，请完成支付
+            请使用 <b>微信</b> 扫一扫完成支付，如已完成支付，页面会自动跳转。
         </div>
     `;
     

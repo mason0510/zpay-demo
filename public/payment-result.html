@@ -219,6 +219,11 @@
                 resultTitle.textContent = '支付成功！';
                 resultMessage.textContent = '您的支付已完成，感谢您的购买！';
                 
+                // 3秒后自动回到首页
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+                
                 // 隐藏检查状态按钮
                 document.getElementById('checkStatusBtn').style.display = 'none';
                 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>微信 Native 扫码支付 Demo</title>
+  <style>
+    body {font-family: Arial; text-align: center; padding-top: 60px;}
+    #qr img {width: 260px; height: 260px; margin-top: 20px; border: 1px solid #eee;}
+    input {padding:6px 10px;margin:0 6px;width:120px}
+    button {padding:6px 14px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <h2>微信扫码支付 Demo</h2>
+  <div>
+    商品描述 <input id="desc" value="测试商品" />
+    金额(元) <input id="amt" type="number" min="0.01" step="0.01" value="1" />
+    <button id="payBtn">生成二维码</button>
+  </div>
+  <div id="qr"></div>
+
+<script>
+const $ = (id)=>document.getElementById(id);
+$('payBtn').onclick=async()=>{
+  const description=$('desc').value.trim();
+  const amount=parseFloat($('amt').value);
+  const resp=await fetch('/api/create-order',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({description,amount})
+  }).then(r=>r.json());
+  if(resp.success){
+    $('qr').innerHTML=`<img src="${resp.data.qrDataUrl}" alt="二维码"><p>订单号：${resp.data.orderNo}</p>`;
+  }else alert(resp.message||'下单失败');
+};
+</script>
+</body>
+</html> 

@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "twitter-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/houzi/code/aicode/twitter-data/twitter-mcp/build/index.js"
+      ],
+      "cwd": "/Users/houzi/code/aicode/twitter-data/twitter-mcp",
+      "env": {
+        "API_KEY": "nrEABLyvi2TtQs7HuVHnrS5oZ",
+        "API_SECRET_KEY": "uZmthMQ6jFdNVRxdF0G9n6iYNVsAartArWpYJKO2rPnrBgOOBB",
+        "ACCESS_TOKEN": "920303847486013441-BqU4VtaTw3oPs5VqpWsMw4vtSWD1vrx",
+        "ACCESS_TOKEN_SECRET": "upj1v3gzEhgbIDWIV2eQ0KGZHET5SqYw2JqjKArK1QUFb"
+      },
+      "allowDangerousOperations": true,
+      "autoApprove": true
+    }
+  }
+}
