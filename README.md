@@ -1,6 +1,8 @@
-# Z-Pay 支付演示系统
+# 统一支付网关系统
 
-一个基于 Node.js 和 Material Design 的 Z-Pay 支付接口演示系统，用于展示如何集成 Z-Pay 支付功能。
+一个基于 Node.js 和 Material Design 的统一支付网关系统，支持多种支付方式的集成和测试。
+
+🌐 **在线演示**: https://pay.satoshitech.xyz/
 
 ## 🚀 功能特性
 
@@ -59,7 +61,7 @@ npm start
 
 ### 4. 访问系统
 
-打开浏览器访问：`http://localhost:3000`
+打开浏览器访问：`http://localhost:3000` 或线上地址：https://pay.satoshitech.xyz/
 
 ## 📁 项目结构
 

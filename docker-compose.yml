@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  payment-gateway:
+    build: .
+    container_name: payment-gateway
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - VIRTUAL_HOST=pay.satoshitech.xyz
+      - LETSENCRYPT_HOST=pay.satoshitech.xyz
+      - LETSENCRYPT_EMAIL=admin@satoshitech.xyz
+    volumes:
+      - ./logs:/app/logs
+      - ./.env:/app/.env:ro
+    networks:
+      - nginx-proxy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  nginx-proxy:
+    external: true

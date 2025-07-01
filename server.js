@@ -16,6 +16,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+// 健康检查端点
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        service: 'Z-Pay Demo'
+    });
+});
+
 // Z-Pay配置 - 从环境变量读取
 const ZPAY_CONFIG = {
     pid: process.env.ZPAY_PID || '你的pid', // 商户ID
